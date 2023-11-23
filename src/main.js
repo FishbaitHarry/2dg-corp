@@ -1,5 +1,5 @@
 import { GameState, onTickModel } from "./model.js";
-import { render } from "./render.js";
+import { render } from "./renderVue.js";
 import { BossOffice, ScamCenter, RecruitmentAgency } from './departments.js';
 
 const rootEl = document.getElementById('app');

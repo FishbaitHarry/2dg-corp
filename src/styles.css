@@ -1,0 +1,43 @@
+:root {
+  --color-teal: #17BEBB;
+  --color-darkgray: #2E282A;
+  --color-orange: #CD5334;
+  --color-lightyellow: #EDB88B;
+  --color-mistyrose: #FAD8D6;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background-color: var(--color-teal);
+  font-family: 'Josefin Sans', sans-serif;
+}
+header {
+  font-size: 40px;
+  font-weight: bold;
+}
+.dep-list_container {}
+.dep-overview_container {
+  padding: 10px;
+  margin: 10px;
+  background-color: var(--color-darkgray);
+  color: var(--color-mistyrose);
+}
+.dep-overview_name {
+  font-weight: 700;
+}
+.dep-overview_employees {}
+.dep-overview_cash {}
+.dep-overview_ticks {
+  display: none;
+}
+.dep-overview_action {
+  background-color: var(--color-orange);
+  border-radius: 0;
+  box-shadow: 2px 2px 0px var(--color-teal);
+  padding: 5px;
+
+  color: var(--color-darkgray);
+  font-family: inherit;
+  font-weight: bold;
+}
