@@ -1,4 +1,5 @@
-import { createApp, shallowRef, ref, triggerRef, inject } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+import { createApp, shallowRef, ref, triggerRef, inject, computed } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+import { addDepartment, getAvailableDepartments } from './departments.js';
 
 const TopComponent = {
   setup() {
@@ -20,14 +21,17 @@ const app = createApp(TopComponent);
 app.component('DepartmentList', {
   props: ['departments'],
   setup(props) {
+    const state = inject('state');
     const departments = props.departments;
-    return { departments };
+    return { state, departments };
   },
   template: `
     <div class="dep-list_container">
       <div v-for="item in departments">
         <DepartmentOverview :department="item" />
       </div>
+      <AddDepartmentSelector />
+      <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
     </div>
     `
 });
@@ -40,33 +44,42 @@ app.component('DepartmentOverview', {
   },
   template: `
     <div class="dep-overview_container">
-    <strong class="dep-overview_name">{{dep.displayName}}</strong>
-    <div class="dep-overview_employees">employees: {{dep.resources.employees}}</div>
-    <div class="dep-overview_cash">cash: {{dep.resources.cash}}</div>
-    <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
-    <button v-for="item in dep.actions" @click="item.onClick(dep)" class="dep-overview_action">{{item.displayName}}</button>
+      <span class="material-symbols-outlined" v-if="dep.icon">{{dep.icon}}</span>
+      <strong class="dep-overview_name">{{dep.displayName}}</strong>
+      <div class="dep-overview_employees">employees: {{dep.resources.employees}}</div>
+      <div class="dep-overview_cash">cash: {{dep.resources.cash}}</div>
+      <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
+      <button v-for="item in dep.actions" @click="item.onClick(dep)" class="dep-overview_action">
+        <span class="material-symbols-outlined" v-if="item.icon">{{item.icon}}</span> <span>{{item.displayName}}</span>
+      </button>
     </div>
   `,
 });
 
-const MyComponent = {
-  setup(props) {
-    const count = ref(0)
-    const name = ref(props.name);
-
-    // expose the ref to the template
-    return {
-      count, name
-    }
+app.component('AddDepartmentSelector', {
+  setup() {
+    const active = ref(false);
+    const state = inject('state');
+    const submit = (item) => {
+      addDepartment(state.value, item.typeId);
+      active.value = false;
+    };
+    const available = computed(() => getAvailableDepartments(state.value));
+    return { state, active, submit, available };
   },
   template: `
-    <button @click="count++">
-      You {{ name }} clicked me {{ count }} times.
-    </button>`
-}
-app.component('MyComponent', MyComponent);
-
-// Vue is just too smart for this project, it only rerenders smallest parts of template.
+    <div class="add-dep-selector_container">
+      <div v-if="!active" class="add-dep-selector_cta" @click="active=true">
+        + Add new department
+      </div>
+      <div v-if="active">
+        <span v-for="item in available" @click="submit(item)">
+          {{item.displayName}}
+        </span>
+      </div>
+    </div>
+  `,
+});
 
 export function render(rootEl, state) {
   // following line makes `this.state` available in all component instances

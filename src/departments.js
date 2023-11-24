@@ -6,7 +6,7 @@ const TOO_MUCH = Number.MAX_SAFE_INTEGER + 1;
 export const BossOffice = {
   id: 'boss-office-id',
   displayName: 'Boss Office',
-  icon: 'department',
+  icon: 'monitoring',
   typeId: 'boss-office',
   resources: { cash: MILLION, employees: 1 },
   connections: {},
@@ -15,7 +15,7 @@ export const BossOffice = {
 export const ScamCenter = {
   id: 'scam-center-1',
   displayName: 'Scam Call Center',
-  icon: 'department',
+  icon: 'monetization_on',
   typeId: 'scam-center',
   resources: {
     cash: 10000, employees: 1, productivity: 1.5, wages: 1,
@@ -27,7 +27,7 @@ export const ScamCenter = {
 export const RecruitmentAgency = {
   id: 'recruitment-agency-1',
   displayName: 'Recruitment Agency',
-  icon: 'department',
+  icon: 'cases',
   typeId: 'recruitment-agency',
   resources: {
     cash: 0, employees: 0, productivity: 1, wages: 1,
@@ -36,3 +36,23 @@ export const RecruitmentAgency = {
   connections: { mainTarget: ScamCenter },
   actions: DEFAULT_ACTIONS,
 };
+
+export function getAvailableDepartments(state) {
+  // TODO: check state.achievements here
+  return [
+    ScamCenter,
+    RecruitmentAgency,
+  ];
+}
+export function addDepartment(state, typeId) {
+  const departmentProto = getAvailableDepartments(state).find( dep => dep.typeId == typeId );
+  if (!departmentProto) throw 'Invalid department typeId';
+  const lastDepartment = state.departments[state.departments.length - 1]; // only placeholder
+  const newDepartment = {
+    ...departmentProto,
+    id: typeId + '-' + state.ticksOld, // new id
+    resources: {...departmentProto.resources}, // copy resources
+    connections: { mainTarget: lastDepartment }, // reset connections
+  };
+  state.departments.push(newDepartment);
+}

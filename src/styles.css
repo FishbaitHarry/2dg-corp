@@ -15,13 +15,30 @@ body {
 header {
   font-size: 40px;
   font-weight: bold;
+  color: var(--color-orange);
+  padding: 10px;
+  background-color: var(--color-darkgray);
+  box-shadow: 2px 2px 0px var(--color-orange);
 }
 .dep-list_container {}
+.add-dep-selector_container {
+  padding: 10px;
+  margin: 12px 0px;
+  background-color: var(--color-darkgray);
+  box-shadow: 2px 2px 0px var(--color-lightyellow);
+  color: var(--color-mistyrose);
+}
 .dep-overview_container {
   padding: 10px;
-  margin: 10px;
+  margin: 12px 0px;
   background-color: var(--color-darkgray);
+  box-shadow: 2px 2px 0px var(--color-lightyellow);
   color: var(--color-mistyrose);
+}
+.dep-overview_container > .material-symbols-outlined {
+  float: left;
+  font-size: 50px;
+  margin-right: 5px;
 }
 .dep-overview_name {
   font-weight: 700;
@@ -40,4 +57,7 @@ header {
   color: var(--color-darkgray);
   font-family: inherit;
   font-weight: bold;
+  line-height: 24px;
+
+  display: flex;
 }
