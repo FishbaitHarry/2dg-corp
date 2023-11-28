@@ -20,7 +20,16 @@ header {
   background-color: var(--color-darkgray);
   box-shadow: 2px 2px 0px var(--color-orange);
 }
+button { /* button style reset */
+  background: none;
+  border: none;
+  font-style: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
 .dep-list_container {}
+
 .add-dep-selector_container {
   padding: 10px;
   margin: 12px 0px;
@@ -28,6 +37,25 @@ header {
   box-shadow: 2px 2px 0px var(--color-lightyellow);
   color: var(--color-mistyrose);
 }
+.add-dep-selector_list{
+  height: 80px;
+  display: flex;
+  flex-direction: row;
+}
+.add-dep-selector_option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px;
+}
+.add-dep-selector_option > .material-symbols-outlined {
+  font-size: 50px;
+}
+.add-dep-selector_label {
+  font-size: 12px;
+  text-align: center;
+}
+
 .dep-overview_container {
   padding: 10px;
   margin: 12px 0px;

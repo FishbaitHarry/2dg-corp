@@ -69,13 +69,14 @@ app.component('AddDepartmentSelector', {
   },
   template: `
     <div class="add-dep-selector_container">
-      <div v-if="!active" class="add-dep-selector_cta" @click="active=true">
+      <button type="button" v-if="!active" class="add-dep-selector_cta" @click="active=true">
         + Add new department
-      </div>
-      <div v-if="active">
-        <span v-for="item in available" @click="submit(item)">
-          {{item.displayName}}
-        </span>
+      </button>
+      <div v-if="active" class="add-dep-selector_list">
+        <button type="button" v-for="item in available" @click="submit(item)" class="add-dep-selector_option">
+          <div class="material-symbols-outlined">{{item.icon}}</div>
+          <div class="add-dep-selector_label">{{item.displayName}}</div>
+        </button>
       </div>
     </div>
   `,
