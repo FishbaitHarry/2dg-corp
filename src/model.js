@@ -15,9 +15,11 @@ const Department = {
 // no OOP allowed!
 export const GameState = {
   ticksOld: 0,
+  cash: MILLION,
   departments: [],
   worldState: {},
   achievements: {},
+  alerts: [{message:'Objective: Make as much money as possible before you are made bankrupt!'}],
 };
 
 export function onTickModel(state) {
@@ -25,15 +27,18 @@ export function onTickModel(state) {
     if (dep.typeId == 'scam-center') onTickScams(dep, state);
     if (dep.typeId == 'recruitment-agency') onTickRecruits(dep, state);
   });
+  // just for display in the boss office
+  state.departments[0].resources.cash = state.cash;
   state.ticksOld += 1;
 }
 
 function onTickScams(dep, state) {
-  const { employees, productivity, wages, cash, totalIncome } = dep.resources;
+  const { employees, productivity, wages, totalIncome } = dep.resources;
   const income = employees * productivity;
   const operatingCost = employees * wages;
 
-  dep.resources.cash = cash + income - operatingCost;
+  state.cash += income - operatingCost;
+  dep.resources.balance = income - operatingCost;
   dep.resources.totalIncome = totalIncome + income;
   
   const { lawsuits, totalLawsuits } = dep.resources;
@@ -48,11 +53,12 @@ function onTickScams(dep, state) {
 }
 
 function onTickRecruits(dep, state) {
-  const { employees, productivity, wages, cash } = dep.resources;
+  const { employees, productivity, wages } = dep.resources;
   const operatingCost = employees * wages;
   const newLeads = employees * productivity;
 
-  dep.resources.cash = cash - operatingCost;
+  state.cash -= operatingCost;
+  dep.resources.balance = -1 * operatingCost;
   dep.resources.totalLeads += newLeads;
 
   const { mainTarget } = dep.connections;

@@ -1,4 +1,4 @@
-import { createApp, shallowRef, ref, triggerRef, inject, computed } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+import { createApp, shallowRef, ref, triggerRef, inject, computed, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
 import { addDepartment, getAvailableDepartments } from './departments.js';
 
 const TopComponent = {
@@ -12,7 +12,8 @@ const TopComponent = {
   },
   template: `
     <div @click="rerender">
-      <DepartmentList :departments="state.departments"></DepartmentList>
+      <AlertList />
+      <DepartmentList :departments="state.departments" />
     </div>
   `,
 }
@@ -46,8 +47,11 @@ app.component('DepartmentOverview', {
     <div class="dep-overview_container">
       <span class="material-symbols-outlined" v-if="dep.icon">{{dep.icon}}</span>
       <strong class="dep-overview_name">{{dep.displayName}}</strong>
-      <div class="dep-overview_employees">employees: {{dep.resources.employees}}</div>
-      <div class="dep-overview_cash">cash: {{dep.resources.cash}}</div>
+      <div class="dep-overview_employees">{{dep.resources.employees}} employees</div>
+      <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: \${{dep.resources.cash}}</div>
+      <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: \${{dep.resources.cash}} Bankruptcy warning!</div>
+      <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: \${{dep.resources.balance}} per day</div>
+      <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
       <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
       <button v-for="item in dep.actions" @click="item.onClick(dep)" class="dep-overview_action">
         <span class="material-symbols-outlined" v-if="item.icon">{{item.icon}}</span> <span>{{item.displayName}}</span>
@@ -78,6 +82,29 @@ app.component('AddDepartmentSelector', {
           <div class="add-dep-selector_label">{{item.displayName}}</div>
         </button>
       </div>
+    </div>
+  `,
+});
+
+app.component('AlertList', {
+  setup() {
+    const state = inject('state');
+    const openAlerts = ref([]);
+    watch( state, (newState, oldState) => {
+      if (!newState.alerts) return;
+      // sucks up all alerts from state and saves them internally
+      openAlerts.value.push(...newState.alerts);
+      state.value.alerts.splice(0); // remove all
+    });
+    function closeAlert(item) {
+      const index = openAlerts.value.indexOf(item);
+      openAlerts.value.splice(index, 1);
+    }
+    return { openAlerts, closeAlert };
+  },
+  template: `
+    <div v-for="item in openAlerts" class="alert-list_alert-container">
+      {{ item.message }} <a href="#" @click.prevent="closeAlert(item)">X</a>
     </div>
   `,
 });

@@ -18,7 +18,7 @@ export const ScamCenter = {
   icon: 'monetization_on',
   typeId: 'scam-center',
   resources: {
-    cash: 10000, employees: 1, productivity: 1.5, wages: 1,
+    employees: 0, balance: 0, productivity: 18, wages: 16,
     totalIncome: 0, lawsuits: 0, totalLawsuits: 0
   },
   connections: {},
@@ -30,7 +30,7 @@ export const RecruitmentAgency = {
   icon: 'cases',
   typeId: 'recruitment-agency',
   resources: {
-    cash: 0, employees: 0, productivity: 1, wages: 1,
+    employees: 0, balance: 0, productivity: 1, wages: 16,
     totalLeads: 0
   },
   connections: { mainTarget: ScamCenter },
