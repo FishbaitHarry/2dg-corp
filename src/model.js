@@ -1,3 +1,5 @@
+import { addDepartment } from "./departments.js";
+
 const MILLION = 1000000;
 const TOO_MUCH = Number.MAX_SAFE_INTEGER + 1;
 
@@ -19,8 +21,24 @@ export const GameState = {
   departments: [],
   worldState: {},
   achievements: {},
-  alerts: [{message:'Objective: Make as much money as possible before you are made bankrupt!'}],
+  alerts: [{
+    message: 'Objective: Make as much money as possible!'
+  }],
 };
+
+const BankruptcyAlert = {
+  message: 'Bankrupt! Your liabilities exceeded your credit limit.',
+  actionLabel: 'Restart game',
+  action: restartGame,
+};
+
+export function restartGame(state) {
+  state.ticksOld = 0;
+  state.cash = MILLION;
+  state.departments.splice(0);
+  addDepartment(state, 'boss-office');
+  // leave achievements and alerts alone
+}
 
 export function onTickModel(state) {
   // endgame condition
@@ -40,6 +58,7 @@ export function onTickModel(state) {
   }
   if (resources.cash < -1 * resources.creditLine) {
     resources.bankrupt = true;
+    state.alerts.push(BankruptcyAlert);
   }
   if (lastDayIncome * 30 > resources.creditLine) {
     resources.creditLine = lastDayIncome * 30;

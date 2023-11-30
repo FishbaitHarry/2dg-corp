@@ -27,9 +27,9 @@ app.component('DepartmentList', {
   },
   template: `
     <div class="dep-list_container">
-      <div v-for="item in departments">
+      <template v-for="item in departments" :key="item.id">
         <DepartmentOverview :department="item" />
-      </div>
+      </template>
       <AddDepartmentSelector />
     </div>
     `
@@ -100,11 +100,12 @@ app.component('AlertList', {
       const index = openAlerts.value.indexOf(item);
       openAlerts.value.splice(index, 1);
     }
-    return { openAlerts, closeAlert };
+    return { openAlerts, closeAlert, state };
   },
   template: `
     <div v-for="item in openAlerts" class="alert-list_alert-container">
-      {{ item.message }} <a href="#" @click.prevent="closeAlert(item)">X</a>
+      {{ item.message }} <a href="#" v-if="!item.action" @click.prevent="closeAlert(item)">X</a>
+      <button type="button" v-if="item.action" @click="item.action(state), closeAlert(item)">{{item.actionLabel}}</button>
     </div>
   `,
 });

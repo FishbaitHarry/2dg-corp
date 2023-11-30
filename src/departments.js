@@ -37,6 +37,7 @@ export const RecruitmentAgency = {
   actions: DEFAULT_ACTIONS,
 };
 
+const allDepartments = [BossOffice, ScamCenter, RecruitmentAgency];
 export function getAvailableDepartments(state) {
   // TODO: check state.achievements here
   return [
@@ -44,13 +45,15 @@ export function getAvailableDepartments(state) {
     RecruitmentAgency,
   ];
 }
+
+let idCounter = 0;
 export function addDepartment(state, typeId) {
-  const departmentProto = getAvailableDepartments(state).find( dep => dep.typeId == typeId );
+  const departmentProto = allDepartments.find( dep => dep.typeId == typeId );
   if (!departmentProto) throw 'Invalid department typeId';
   const lastDepartment = state.departments[state.departments.length - 1]; // only placeholder
   const newDepartment = {
     ...departmentProto,
-    id: typeId + '-' + state.ticksOld, // new id
+    id: typeId + '-' + (idCounter++),
     resources: {...departmentProto.resources}, // copy resources
     connections: { mainTarget: lastDepartment }, // reset connections
   };
