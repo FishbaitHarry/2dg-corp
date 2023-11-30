@@ -8,7 +8,7 @@ export const BossOffice = {
   displayName: 'Boss Office',
   icon: 'monitoring',
   typeId: 'boss-office',
-  resources: { cash: MILLION, employees: 1 },
+  resources: { cash: MILLION, employees: 1, creditLine: 10000 },
   connections: {},
   actions: DEFAULT_ACTIONS,
 };

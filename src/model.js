@@ -23,13 +23,27 @@ export const GameState = {
 };
 
 export function onTickModel(state) {
+  // endgame condition
+  if (state.departments[0].resources.bankrupt) return;
+  // cycle all deps
   state.departments.forEach(dep => {
     if (dep.typeId == 'scam-center') onTickScams(dep, state);
     if (dep.typeId == 'recruitment-agency') onTickRecruits(dep, state);
   });
-  // just for display in the boss office
-  state.departments[0].resources.cash = state.cash;
   state.ticksOld += 1;
+  // some global checks, might move to a department later
+  const resources = state.departments[0].resources;
+  const lastDayIncome = state.cash - resources.cash;
+  resources.cash = state.cash;
+  if (resources.cash < 0) {
+    resources.bankruptcyWarning = true;
+  }
+  if (resources.cash < -1 * resources.creditLine) {
+    resources.bankrupt = true;
+  }
+  if (lastDayIncome * 30 > resources.creditLine) {
+    resources.creditLine = lastDayIncome * 30;
+  }
 }
 
 function onTickScams(dep, state) {

@@ -73,6 +73,7 @@ button { /* button style reset */
   font-weight: 700;
 }
 .dep-overview_employees {}
+.dep-overview_bankrupt,
 .dep-overview_cash-negative,
 .dep-overview_loss {
   color: var(--color-red);

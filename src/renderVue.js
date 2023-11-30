@@ -49,7 +49,9 @@ app.component('DepartmentOverview', {
       <strong class="dep-overview_name">{{dep.displayName}}</strong>
       <div class="dep-overview_employees">{{dep.resources.employees}} employees</div>
       <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: \${{dep.resources.cash}}</div>
-      <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: \${{dep.resources.cash}} Bankruptcy warning!</div>
+      <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: \${{dep.resources.cash}}</div>
+      <div class="dep-overview_credit" v-if="dep.resources.creditLine > 0">Credit limit: \${{dep.resources.creditLine}}</div>
+      <div class="dep-overview_bankrupt" v-if="dep.resources.bankrupt">BANKRUPT!</div>
       <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: \${{dep.resources.balance}} per day</div>
       <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
       <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
