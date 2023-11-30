@@ -13,18 +13,17 @@ const TopComponent = {
   template: `
     <div @click="rerender">
       <AlertList />
-      <DepartmentList :departments="state.departments" />
+      <DepartmentList />
     </div>
   `,
 }
 const app = createApp(TopComponent);
 
 app.component('DepartmentList', {
-  props: ['departments'],
-  setup(props) {
+  setup() {
     const state = inject('state');
-    const departments = props.departments;
-    return { state, departments };
+    const departments = computed(() => state.value.departments);
+    return { departments };
   },
   template: `
     <div class="dep-list_container">
@@ -32,7 +31,6 @@ app.component('DepartmentList', {
         <DepartmentOverview :department="item" />
       </div>
       <AddDepartmentSelector />
-      <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
     </div>
     `
 });
@@ -71,7 +69,7 @@ app.component('AddDepartmentSelector', {
       active.value = false;
     };
     const available = computed(() => getAvailableDepartments(state.value));
-    return { state, active, submit, available };
+    return { active, submit, available };
   },
   template: `
     <div class="add-dep-selector_container">
