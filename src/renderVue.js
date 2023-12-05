@@ -39,22 +39,35 @@ app.component('DepartmentOverview', {
   props: ['department'],
   setup(props) {
     const state = inject('state');
-    return { dep: props.department, state };
+    const expanded = ref(false);
+    return { dep: props.department, state, expanded };
   },
   template: `
-    <div class="dep-overview_container">
-      <span class="material-symbols-outlined" v-if="dep.icon">{{dep.icon}}</span>
-      <strong class="dep-overview_name">{{dep.displayName}}</strong>
-      <div class="dep-overview_employees">{{dep.resources.employees}} employees</div>
-      <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: \${{dep.resources.cash}}</div>
-      <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: \${{dep.resources.cash}}</div>
-      <div class="dep-overview_credit" v-if="dep.resources.creditLine > 0">Credit limit: \${{dep.resources.creditLine}}</div>
-      <div class="dep-overview_bankrupt" v-if="dep.resources.bankrupt">BANKRUPT!</div>
-      <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: \${{dep.resources.balance}} per day</div>
-      <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
-      <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
-      <button v-for="item in dep.actions" @click="item.onClick(dep)" class="dep-overview_action">
-        <span class="material-symbols-outlined" v-if="item.icon">{{item.icon}}</span> <span>{{item.displayName}}</span>
+    <div class="dep-overview_container" :class="{expanded:expanded}">
+      <span class="material-symbols-outlined dep-overview_icon" v-if="dep.icon">{{dep.icon}}</span>
+      <div class="dep-overview_resources">
+        <strong class="dep-overview_name">{{dep.displayName}}</strong>
+        <div class="dep-overview_employees" v-if="dep.resources.employees">
+          {{dep.resources.employees}} employees
+          <InfoBox msg="Each employee takes a minimum wage of $16 per day." />
+        </div>
+        <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: \${{dep.resources.cash}}</div>
+        <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: \${{dep.resources.cash}}</div>
+        <div class="dep-overview_credit" v-if="dep.resources.creditLine > 0">
+          Credit limit: \${{dep.resources.creditLine}}
+          <InfoBox msg="Maximum amount your balance can drop below zero before bank blocks your business. Approx equal to your highest monthly profit." />
+        </div>
+        <div class="dep-overview_bankrupt" v-if="dep.resources.bankrupt">BANKRUPT!</div>
+        <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: \${{dep.resources.balance}} per day</div>
+        <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
+        <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
+      </div>
+      <button type="button" class="dep-overview_expand primary-button" @click="expanded = !expanded">
+        <span class="material-symbols-outlined" v-if="!expanded">unfold_more</span>
+        <span class="material-symbols-outlined" v-if="expanded">unfold_less</span>
+      </button>
+      <button v-for="item in dep.actions" @click="item.onClick(dep)" class="dep-overview_action primary-button">
+        <span class="material-symbols-outlined" v-if="item.icon">{{item.icon}}</span> <span style="display:none;">{{item.displayName}}</span>
       </button>
     </div>
   `,
@@ -74,7 +87,8 @@ app.component('AddDepartmentSelector', {
   template: `
     <div class="add-dep-selector_container">
       <button type="button" v-if="!active" class="add-dep-selector_cta" @click="active=true">
-        + Add new department
+        <span class="material-symbols-outlined">box_add</span>
+        Add new department
       </button>
       <div v-if="active" class="add-dep-selector_list">
         <button type="button" v-for="item in available" @click="submit(item)" class="add-dep-selector_option">
@@ -104,10 +118,20 @@ app.component('AlertList', {
   },
   template: `
     <div v-for="item in openAlerts" class="alert-list_alert-container">
-      {{ item.message }} <a href="#" v-if="!item.action" @click.prevent="closeAlert(item)">X</a>
-      <button type="button" v-if="item.action" @click="item.action(state), closeAlert(item)">{{item.actionLabel}}</button>
+      {{ item.message }}
+      <button type="button" class="primary-button" v-if="!item.action" @click.prevent="closeAlert(item)">X</button>
+      <button type="button" class="primary-button" v-if="item.action" @click="item.action(state), closeAlert(item)">{{item.actionLabel}}</button>
     </div>
   `,
+});
+
+app.component('InfoBox', {
+  props: ['msg'],
+  template: `
+    <div class="dep-overview_description">
+      <div class="material-symbols-outlined">info</div>
+      {{ msg }}
+    </div>`,
 });
 
 export function render(rootEl, state) {

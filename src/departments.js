@@ -8,14 +8,14 @@ export const BossOffice = {
   displayName: 'Boss Office',
   icon: 'monitoring',
   typeId: 'boss-office',
-  resources: { cash: MILLION, employees: 1, creditLine: 10000 },
+  resources: { cash: MILLION, employees: 0, creditLine: 10000 },
   connections: {},
   actions: DEFAULT_ACTIONS,
 };
 export const ScamCenter = {
   id: 'scam-center-1',
   displayName: 'Scam Call Center',
-  icon: 'monetization_on',
+  icon: 'support_agent',
   typeId: 'scam-center',
   resources: {
     employees: 0, balance: 0, productivity: 18, wages: 16,

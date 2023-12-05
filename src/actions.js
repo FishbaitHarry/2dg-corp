@@ -1,6 +1,6 @@
 const HIRE_EMPLOYEE = {
   displayName: 'Hire Employee',
-  icon: 'add_chart',
+  icon: 'person_add',
   onClick: (dep) => { dep.resources.employees += 1 },
 };
 

@@ -9,7 +9,7 @@
 
 body {
   margin: 0;
-  padding: 20px;
+  padding: 10px;
   background-color: var(--color-teal);
   font-family: 'Josefin Sans', sans-serif;
 }
@@ -24,10 +24,20 @@ header {
 button { /* button style reset */
   background: none;
   border: none;
+  border-radius: 0;
   font-style: inherit;
   font-family: inherit;
   font-size: inherit;
   color: inherit;
+}
+.primary-button {
+  background-color: var(--color-orange);
+  box-shadow: 2px 2px 0px var(--color-teal);
+  padding: 5px;
+
+  color: var(--color-darkgray);
+  font-weight: bold;
+  line-height: 24px;
 }
 .dep-list_container {}
 
@@ -37,6 +47,17 @@ button { /* button style reset */
   background-color: var(--color-darkgray);
   box-shadow: 2px 2px 0px var(--color-lightyellow);
   color: var(--color-mistyrose);
+}
+.add-dep-selector_cta {
+  display: flex;
+  line-height: 50px;
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+}
+.add-dep-selector_cta > .material-symbols-outlined {
+  font-size: 50px;
+  margin-right: 5px;
 }
 .add-dep-selector_list{
   height: 80px;
@@ -57,20 +78,42 @@ button { /* button style reset */
   text-align: center;
 }
 
+/* OVERVIEW */
 .dep-overview_container {
   padding: 10px;
   margin: 12px 0px;
+
   background-color: var(--color-darkgray);
   box-shadow: 2px 2px 0px var(--color-lightyellow);
   color: var(--color-mistyrose);
+
+  display: flex;
+  height: 55px;
 }
-.dep-overview_container > .material-symbols-outlined {
-  float: left;
+.dep-overview_container.expanded {
+  height: auto;
+}
+.dep-overview_container .dep-overview_description {
+  display: none;
+  font-style: italic;
+}
+.dep-overview_container.expanded .dep-overview_description {
+  display: block;
+}
+.dep-overview_description .material-symbols-outlined {
+  font-size: 14px;
+}
+.dep-overview_container .dep-overview_icon {
   font-size: 50px;
   margin-right: 5px;
 }
 .dep-overview_name {
   font-weight: 700;
+}
+.dep-overview_resources {
+  flex: 1 1 auto;
+  height: 100%;
+  overflow: hidden;
 }
 .dep-overview_employees {}
 .dep-overview_bankrupt,
@@ -81,20 +124,16 @@ button { /* button style reset */
 .dep-overview_ticks {
   display: none;
 }
+.dep-overview_expand {
+  height: 55px;
+  width: 55px;
+}
 .dep-overview_action {
-  background-color: var(--color-orange);
-  border-radius: 0;
-  box-shadow: 2px 2px 0px var(--color-teal);
-  padding: 5px;
-
-  color: var(--color-darkgray);
-  font-family: inherit;
-  font-weight: bold;
-  line-height: 24px;
-
-  display: flex;
+  height: 55px;
+  width: 55px;
 }
 
+/* ALERTS */
 .alert-list_alert-container {
   padding: 10px;
   margin: 12px 0px;
