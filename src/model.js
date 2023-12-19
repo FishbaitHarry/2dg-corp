@@ -35,6 +35,9 @@ const BankruptcyAlert = {
   actionLabel: 'Restart game',
   action: restartGame,
 };
+const LawsuitAlert = {
+  message: 'Lawsuit! One of your departments has been sued and is unable to provide income while being investigated!',
+};
 
 export function restartGame(state) {
   state.ticksOld = 0;
@@ -86,6 +89,7 @@ function onTickScams(dep, state) {
 
   if (newLawsuits > 0) {
     dep.resources.productivity = 0;
+    state.alerts.push(LawsuitAlert);
   }
 }
 
