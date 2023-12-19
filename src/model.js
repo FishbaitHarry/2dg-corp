@@ -19,7 +19,11 @@ export const GameState = {
   ticksOld: 0,
   cash: MILLION,
   departments: [],
-  worldState: {},
+  worldState: {
+    minimumWage: 16, // unit: dollars per employee per day
+    incomeTax: 0.2, // unit: multiplies your yearly income?
+    corporateTax: 1, // unit: ???
+  },
   achievements: {},
   alerts: [{
     message: 'Objective: Make as much money as possible!'

@@ -39,13 +39,45 @@ app.component('DepartmentOverview', {
   props: ['department'],
   setup(props) {
     const state = inject('state');
-    const expanded = ref(false);
-    return { dep: props.department, state, expanded };
+    const showDetails = ref(false);
+    const addEmployee = (dep) => { dep.resources.employees += 1 };
+    return { dep: props.department, state, showDetails, addEmployee };
   },
   template: `
-    <div class="dep-overview_container" :class="{expanded:expanded}">
+    <div class="dep-overview_container">
       <span class="material-symbols-outlined dep-overview_icon" v-if="dep.icon">{{dep.icon}}</span>
-      <div class="dep-overview_resources">
+      <div class="dep-overview_resources" @click="showDetails = true">
+        <strong class="dep-overview_name">{{dep.displayName}}</strong>
+        <div class="dep-overview_employees" v-if="dep.resources.employees">
+          {{dep.resources.employees}} employees
+        </div>
+        <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: \${{dep.resources.cash}}</div>
+        <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: \${{dep.resources.cash}}</div>
+        <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: \${{dep.resources.balance}} per day</div>
+        <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
+        <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
+      </div>
+      <button @click="addEmployee(dep)" class="dep-overview_action primary-button">
+        <span class="material-symbols-outlined">person_add</span>
+        <span style="display:none;">Hire Employee</span>
+      </button>
+      <div class="dep-details_overlay" v-if="showDetails" @click="showDetails = false" />
+      <DepartmentDetails :department="dep" v-if="showDetails" />
+    </div>
+  `,
+});
+
+
+app.component('DepartmentDetails', {
+  props: ['department'],
+  setup(props) {
+    const state = inject('state');
+    return { dep: props.department, state };
+  },
+  template: `
+    <div class="dep-details_container">
+      <span class="material-symbols-outlined dep-overview_icon" v-if="dep.icon">{{dep.icon}}</span>
+      <div class="dep-details_resources">
         <strong class="dep-overview_name">{{dep.displayName}}</strong>
         <div class="dep-overview_employees" v-if="dep.resources.employees">
           {{dep.resources.employees}} employees
@@ -60,14 +92,13 @@ app.component('DepartmentOverview', {
         <div class="dep-overview_bankrupt" v-if="dep.resources.bankrupt">BANKRUPT!</div>
         <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: \${{dep.resources.balance}} per day</div>
         <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
+        <div class="dep-overview_wages" v-if="dep.resources.wages">Wages: \${{dep.resources.wages}} per employee per day</div>
+        <div class="dep-overview_productivity" v-if="dep.resources.productivity != undefined">Scam gain: \${{dep.resources.productivity}} per employee per day</div>
+        <div class="dep-overview_bankrupt" v-if="dep.resources.lawsuits">Department closed due to pending lawsuits!</div>
         <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
       </div>
-      <button type="button" class="dep-overview_expand primary-button" @click="expanded = !expanded">
-        <span class="material-symbols-outlined" v-if="!expanded">unfold_more</span>
-        <span class="material-symbols-outlined" v-if="expanded">unfold_less</span>
-      </button>
-      <button v-for="item in dep.actions" @click="item.onClick(dep)" class="dep-overview_action primary-button">
-        <span class="material-symbols-outlined" v-if="item.icon">{{item.icon}}</span> <span style="display:none;">{{item.displayName}}</span>
+      <button v-for="item in dep.actions" @click="item.onClick(dep)" class="dep-details_action primary-button">
+        <span class="material-symbols-outlined" v-if="item.icon">{{item.icon}}</span> <span>{{item.displayName}}</span>
       </button>
     </div>
   `,
