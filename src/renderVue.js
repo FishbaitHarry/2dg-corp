@@ -94,7 +94,7 @@ app.component('DepartmentDetails', {
         <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
         <div class="dep-overview_wages" v-if="dep.resources.wages">Wages: \${{dep.resources.wages}} per employee per day</div>
         <div class="dep-overview_productivity" v-if="dep.resources.productivity != undefined">Scam gain: \${{dep.resources.productivity}} per employee per day</div>
-        <div class="dep-overview_bankrupt" v-if="dep.resources.lawsuits">Department closed due to pending lawsuits!</div>
+        <div class="dep-overview_bankrupt" v-if="dep.resources.lawsuits > 0">Department closed due to pending lawsuits!</div>
         <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
       </div>
       <button v-for="item in dep.actions" @click="item.onClick(dep)" class="dep-details_action primary-button">
