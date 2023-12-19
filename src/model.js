@@ -74,27 +74,22 @@ export function onTickModel(state) {
 }
 
 function onTickScams(dep, state) {
-  const { employees, productivity, wages, totalIncome } = dep.resources;
-  const income = employees * productivity;
+  const { employees, productivity, wages, totalIncome, lawsuits } = dep.resources;
+  const income = employees * productivity * (lawsuits ? 0 : 1);
   const operatingCost = employees * wages;
 
   state.cash += income - operatingCost;
   dep.resources.balance = income - operatingCost;
   dep.resources.totalIncome = totalIncome + income;
   
-  const { lawsuits, totalLawsuits } = dep.resources;
+  const { totalLawsuits } = dep.resources;
 
   dep.resources.totalLawsuits = Math.floor( (totalIncome + income) / MILLION );
   const newLawsuits = dep.resources.totalLawsuits - totalLawsuits;
   dep.resources.lawsuits = lawsuits + newLawsuits;
 
   if (newLawsuits > 0) {
-    dep.resources.productivity = 0;
     state.alerts.push(LawsuitAlert);
-  }
-  if (dep.resources.lawsuits == 0) {
-    // restore some productivity
-    dep.resources.productivity = 18;
   }
 }
 

@@ -7,9 +7,13 @@
   --color-mistyrose: #FAD8D6;
 }
 
-html, body {
+html {
+  touch-action: none;
+}
+body {
   touch-action: pan-x pan-y; /* disable iphone tap-to-zoom */
   user-select: none;
+  -webkit-user-select: none;
 }
 body {
   margin: 0;
