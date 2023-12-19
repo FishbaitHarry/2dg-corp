@@ -54,6 +54,7 @@ export function onTickModel(state) {
   state.departments.forEach(dep => {
     if (dep.typeId == 'scam-center') onTickScams(dep, state);
     if (dep.typeId == 'recruitment-agency') onTickRecruits(dep, state);
+    if (dep.typeId == 'legal-department') onTickLegal(dep, state);
   });
   state.ticksOld += 1;
   // some global checks, might move to a department later
@@ -91,6 +92,10 @@ function onTickScams(dep, state) {
     dep.resources.productivity = 0;
     state.alerts.push(LawsuitAlert);
   }
+  if (dep.resources.lawsuits == 0) {
+    // restore some productivity
+    dep.resources.productivity = 18;
+  }
 }
 
 function onTickRecruits(dep, state) {
@@ -105,5 +110,22 @@ function onTickRecruits(dep, state) {
   const { mainTarget } = dep.connections;
   if (mainTarget) {
     mainTarget.resources.employees += newLeads;
+  }
+}
+
+function onTickLegal(dep, state) {
+  const { employees, productivity, wages } = dep.resources;
+  const operatingCost = employees * wages;
+  const cooldownReduction = employees * productivity;
+  
+  state.cash -= operatingCost;
+  dep.resources.balance = -1 * operatingCost;
+  dep.resources.cooldown -= cooldownReduction;
+
+  // currently scans all departments for lawsuits, not one target
+  const mainTarget = state.departments.find(dep => dep.resources.lawsuits > 0);
+  if (dep.resources.cooldown <= 0 && mainTarget) {
+    mainTarget.resources.lawsuits -= 1;
+    dep.resources.cooldown = 100;
   }
 }

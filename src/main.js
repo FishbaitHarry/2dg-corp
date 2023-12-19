@@ -11,5 +11,5 @@ const rerender = render(rootEl, gameState);
 function gameLoop() {
   onTickModel(gameState); // mutates gameState!
   rerender();
-  if (gameState.ticksOld > 200) clearInterval(clock);
+  if (location.host=="localhost:8080" && gameState.ticksOld > 200) clearInterval(clock);
 }

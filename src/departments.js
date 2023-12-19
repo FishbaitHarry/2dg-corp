@@ -36,13 +36,26 @@ export const RecruitmentAgency = {
   connections: { mainTarget: ScamCenter },
   actions: DEFAULT_ACTIONS,
 };
+export const LegalDepartment = {
+  id: 'legal-department-1',
+  displayName: 'Legal Department',
+  icon: 'verified_user',
+  typeId: 'legal-department',
+  resources: {
+    employees: 0, balance: 0, productivity: 3, wages: 16,
+    cooldown: 0,
+  },
+  connections: {},
+  actions: DEFAULT_ACTIONS,
+}
 
-const allDepartments = [BossOffice, ScamCenter, RecruitmentAgency];
+const allDepartments = [BossOffice, ScamCenter, RecruitmentAgency, LegalDepartment];
 export function getAvailableDepartments(state) {
   // TODO: check state.achievements here
   return [
     ScamCenter,
     RecruitmentAgency,
+    LegalDepartment,
   ];
 }
 

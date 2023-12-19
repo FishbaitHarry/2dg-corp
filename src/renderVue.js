@@ -55,6 +55,7 @@ app.component('DepartmentOverview', {
         <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: \${{dep.resources.cash}}</div>
         <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: \${{dep.resources.balance}} per day</div>
         <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
+        <div class="dep-overview_info" v-if="dep.resources.cooldown > 0">Department busy: {{dep.resources.cooldown}}\%</div>
         <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
       </div>
       <button @click="addEmployee(dep)" class="dep-overview_action primary-button">
@@ -93,7 +94,13 @@ app.component('DepartmentDetails', {
         <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: \${{dep.resources.balance}} per day</div>
         <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
         <div class="dep-overview_wages" v-if="dep.resources.wages">Wages: \${{dep.resources.wages}} per employee per day</div>
-        <div class="dep-overview_productivity" v-if="dep.resources.productivity != undefined">Scam gain: \${{dep.resources.productivity}} per employee per day</div>
+        <div class="dep-overview_productivity" v-if="dep.typeId == 'scam-center'">Scam gain: \${{dep.resources.productivity}} per employee per day</div>
+        <div class="dep-overview_productivity" v-if="dep.typeId == 'recruitment-agency'">Recruits: {{dep.resources.productivity}} new hire per employee</div>
+        <div class="dep-overview_productivity" v-if="dep.typeId == 'legal-department'">
+          Lawsuit processing speed: {{dep.resources.productivity}}\% per employee per day
+          <InfoBox msg="After it picks up a lawsuit, the department needs some time to process it. The more employees, the faster this cooldown will drop." />
+        </div>
+        <div class="dep-overview_info" v-if="dep.resources.cooldown > 0">Department busy: {{dep.resources.cooldown}}\%</div>
         <div class="dep-overview_bankrupt" v-if="dep.resources.lawsuits > 0">Department closed due to pending lawsuits!</div>
         <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
       </div>
