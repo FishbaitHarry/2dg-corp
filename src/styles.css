@@ -6,12 +6,9 @@
   --color-lightyellow: #EDB88B;
   --color-mistyrose: #FAD8D6;
 }
-
-html {
-  touch-action: none;
-}
-body {
-  touch-action: pan-x pan-y; /* disable iphone tap-to-zoom */
+html, body {
+  min-height: 100%;
+  touch-action: pan-y; /* disable iphone tap-to-zoom */
   user-select: none;
   -webkit-user-select: none;
 }
@@ -20,6 +17,7 @@ body {
   padding: 10px;
   background-color: var(--color-teal);
   font-family: 'Josefin Sans', sans-serif;
+
 }
 header {
   font-size: 40px;
