@@ -7,12 +7,15 @@
   --color-mistyrose: #FAD8D6;
 }
 
+html, body {
+  touch-action: pan-x pan-y; /* disable iphone tap-to-zoom */
+  user-select: none;
+}
 body {
   margin: 0;
   padding: 10px;
   background-color: var(--color-teal);
   font-family: 'Josefin Sans', sans-serif;
-  touch-action: pan-x pan-y; /* disable iphone tap-to-zoom */
 }
 header {
   font-size: 40px;
