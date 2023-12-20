@@ -114,15 +114,17 @@ function onTickLegal(dep, state) {
   const { employees, productivity, wages } = dep.resources;
   const operatingCost = employees * wages;
   const cooldownReduction = employees * productivity;
-  
-  state.cash -= operatingCost;
-  dep.resources.balance = -1 * operatingCost;
-  dep.resources.cooldown -= cooldownReduction;
 
   // currently scans all departments for lawsuits, not one target
   const mainTarget = state.departments.find(dep => dep.resources.lawsuits > 0);
   if (dep.resources.cooldown <= 0 && mainTarget) {
-    mainTarget.resources.lawsuits -= 1;
-    dep.resources.cooldown = 100;
+    const potentialWork = Math.ceil(cooldownReduction / 100);
+    const maxWork = Math.min(mainTarget.resources.lawsuits, potentialWork);
+    mainTarget.resources.lawsuits -= maxWork;
+    dep.resources.cooldown = 100 * maxWork;
   }
+  
+  state.cash -= operatingCost;
+  dep.resources.balance = -1 * operatingCost;
+  dep.resources.cooldown -= cooldownReduction;
 }

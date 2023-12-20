@@ -42,7 +42,7 @@ export const LegalDepartment = {
   icon: 'verified_user',
   typeId: 'legal-department',
   resources: {
-    employees: 0, balance: 0, productivity: 3, wages: 16,
+    employees: 0, balance: 0, productivity: 1, wages: 16,
     cooldown: 0,
   },
   connections: {},

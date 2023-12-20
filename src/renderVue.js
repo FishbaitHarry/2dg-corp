@@ -48,14 +48,12 @@ app.component('DepartmentOverview', {
       <span class="material-symbols-outlined dep-overview_icon" v-if="dep.icon">{{dep.icon}}</span>
       <div class="dep-overview_resources" @click="showDetails = true">
         <strong class="dep-overview_name">{{dep.displayName}}</strong>
-        <div class="dep-overview_employees" v-if="dep.resources.employees">
-          {{dep.resources.employees}} employees
-        </div>
+        <div class="dep-overview_employees" v-if="dep.resources.employees">{{dep.resources.employees}} employees</div>
         <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: \${{dep.resources.cash}}</div>
         <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: \${{dep.resources.cash}}</div>
+        <div class="dep-overview_info" v-if="dep.resources.cooldown > 0">Department busy: {{dep.resources.cooldown}}\%</div>
         <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: \${{dep.resources.balance}} per day</div>
         <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
-        <div class="dep-overview_info" v-if="dep.resources.cooldown > 0">Department busy: {{dep.resources.cooldown}}\%</div>
         <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
       </div>
       <button @click="addEmployee(dep)" class="dep-overview_action primary-button">
