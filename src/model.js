@@ -31,11 +31,13 @@ export const GameState = {
 };
 
 const BankruptcyAlert = {
+  typeId: 'bankrupt',
   message: 'Bankrupt! Your liabilities exceeded your credit limit.',
   actionLabel: 'Restart game',
   action: restartGame,
 };
 const LawsuitAlert = {
+  typeId: 'lawsuit',
   message: 'Lawsuit! One of your departments has been sued and is unable to provide income while being investigated!',
 };
 

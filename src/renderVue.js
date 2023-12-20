@@ -145,7 +145,8 @@ app.component('AlertList', {
     watch( state, (newState, oldState) => {
       if (!newState.alerts) return;
       // sucks up all alerts from state and saves them internally
-      openAlerts.value.push(...newState.alerts);
+      const uniqueAlerts = newState.alerts.filter( a => openAlerts.value.indexOf(a) == -1 );
+      openAlerts.value.push(...uniqueAlerts);
       state.value.alerts.splice(0); // remove all
     });
     function closeAlert(item) {
