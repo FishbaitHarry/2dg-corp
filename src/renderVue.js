@@ -80,7 +80,7 @@ app.component('DepartmentDetails', {
         <strong class="dep-overview_name">{{dep.displayName}}</strong>
         <div class="dep-overview_employees" v-if="dep.resources.employees">
           <BigNumber :value="dep.resources.employees"/> employees
-          <InfoBox msg="Each employee takes a minimum wage of $16 per day." />
+          <InfoBox msg="Each employee takes a minimum wage of at least $16 per day." />
         </div>
         <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: <Currency :value='dep.resources.cash' /></div>
         <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: <Currency :value='dep.resources.cash' /></div>
@@ -92,13 +92,20 @@ app.component('DepartmentDetails', {
         <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: <Income :value='dep.resources.balance' /> per day</div>
         <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: <Income :value='dep.resources.balance' /> per day</div>
         <div class="dep-overview_wages" v-if="dep.resources.wages">Wages: <Currency :value='dep.resources.wages' /> per employee per day</div>
-        <div class="dep-overview_productivity" v-if="dep.typeId == 'scam-center'">Scam gain: \${{dep.resources.productivity}} per employee per day</div>
+        <div class="dep-overview_productivity" v-if="dep.typeId == 'scam-center'">Scam gain: <Income :value='dep.resources.productivity' /> per employee per day</div>
         <div class="dep-overview_productivity" v-if="dep.typeId == 'recruitment-agency'">Recruits: {{dep.resources.productivity}} new hire per employee</div>
         <div class="dep-overview_productivity" v-if="dep.typeId == 'legal-department'">
           Lawsuit processing speed: {{dep.resources.productivity}}\% per employee per day
           <InfoBox msg="After it picks up a lawsuit, the department needs some time to process it. The more employees, the faster this cooldown will drop." />
         </div>
         <div class="dep-overview_info" v-if="dep.resources.cooldown > 0">Department busy: {{dep.resources.cooldown}}\%</div>
+        <div class="dep-details_morale" v-if="dep.resources.morale != undefined">
+          Employee morale: <BigNumber :value="dep.resources.morale" />
+          <span class="material-symbols-outlined" v-if="dep.resources.morale > 90">sentiment_satisfied</span>
+          <span class="material-symbols-outlined" v-if="dep.resources.morale <= 90 && dep.resources.morale >= 50">sentiment_neutral</span>
+          <span class="material-symbols-outlined" v-if="dep.resources.morale < 50">sentiment_dissatisfied</span>
+          <InfoBox msg="Morale affects productivity. Raise the wages above the minimum to improve morale." />
+        </div>
         <div class="dep-overview_bankrupt" v-if="dep.resources.lawsuits > 0">Department closed due to pending lawsuits!</div>
         <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
       </div>

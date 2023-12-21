@@ -3,18 +3,7 @@ import { addDepartment } from "./departments.js";
 const MILLION = 1000000;
 const TOO_MUCH = Number.MAX_SAFE_INTEGER + 1;
 
-// prototype
-const Department = {
-  id: 'fake-id-string',
-  displayName: 'New Department',
-  icon: 'department',
-  typeId: 'default', // boss-office, scam-center, recruitment-agency, legal-dep,
-  resources: {},
-  connections: {},
-  actions: {},
-};
-
-// no OOP allowed!
+// no OOP allowed! keep it serializable
 export const GameState = {
   ticksOld: 0,
   cash: MILLION,
@@ -40,6 +29,10 @@ const LawsuitAlert = {
   typeId: 'lawsuit',
   message: 'Lawsuit! One of your departments has been sued and is unable to provide income while being investigated!',
 };
+const InflationAlert = {
+  typeId: 'inflation',
+  message: 'Due to global inflation, all minimal wage worker\'s wages have been increased.',
+};
 
 export function restartGame(state) {
   state.ticksOld = 0;
@@ -59,7 +52,25 @@ export function onTickModel(state) {
     if (dep.typeId == 'legal-department') onTickLegal(dep, state);
   });
   state.ticksOld += 1;
-  // some global checks, might move to a department later
+  // inflation
+  if (state.ticksOld % 240 == 0) {
+    state.worldState.minimumWage += 1;
+    state.alerts.push(InflationAlert);
+    state.departments.forEach(dep => {
+      if (dep.resources.wages < state.worldState.minimumWage) {
+        dep.resources.wages = state.worldState.minimumWage;
+      }
+    });
+  }
+  // employee burnout
+  if (state.ticksOld % 20 == 0) {
+    state.departments.forEach(dep => {
+      if (dep.resources.morale > 0 && dep.resources.employees > 0) {
+        dep.resources.morale -= 1;
+      }
+    });
+  }
+  // check cash flow, income, credit and bankruptcy
   const resources = state.departments[0].resources;
   const lastDayIncome = state.cash - resources.cash;
   resources.cash = state.cash;
@@ -76,16 +87,19 @@ export function onTickModel(state) {
 }
 
 function onTickScams(dep, state) {
-  const { employees, productivity, wages, totalIncome, lawsuits } = dep.resources;
+  const { employees, wages, totalIncome } = dep.resources;
+  const { lawsuits, totalLawsuits } = dep.resources;
+  const { baseProductivity, morale } = dep.resources;
+  const moraleMultiplier = Math.max(0.1, (morale + 100) / 200);
+  const productivity = baseProductivity * (lawsuits ? 0 : 1) * (moraleMultiplier);
   const income = employees * productivity * (lawsuits ? 0 : 1);
   const operatingCost = employees * wages;
 
   state.cash += income - operatingCost;
   dep.resources.balance = income - operatingCost;
   dep.resources.totalIncome = totalIncome + income;
+  dep.resources.productivity = productivity; // just for info
   
-  const { totalLawsuits } = dep.resources;
-
   dep.resources.totalLawsuits = Math.floor( (totalIncome + income) / MILLION );
   const newLawsuits = dep.resources.totalLawsuits - totalLawsuits;
   dep.resources.lawsuits = lawsuits + newLawsuits;

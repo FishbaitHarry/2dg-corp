@@ -13,7 +13,7 @@ const FIRE_EMPLOYEE = {
 const INCREASE_WAGES = {
   displayName: 'Increase Wages',
   icon: 'price_check',
-  onClick: (dep) => { dep.resources.wages += 1 },
+  onClick: (dep) => { dep.resources.wages += 1; dep.resources.morale += 20; },
 };
 
 const SHOW_INFO = {
