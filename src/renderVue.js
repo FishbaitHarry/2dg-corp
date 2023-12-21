@@ -48,12 +48,12 @@ app.component('DepartmentOverview', {
       <span class="material-symbols-outlined dep-overview_icon" v-if="dep.icon">{{dep.icon}}</span>
       <div class="dep-overview_resources" @click="showDetails = true">
         <strong class="dep-overview_name">{{dep.displayName}}</strong>
-        <div class="dep-overview_employees" v-if="dep.resources.employees">{{dep.resources.employees}} employees</div>
-        <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: \${{dep.resources.cash}}</div>
-        <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: \${{dep.resources.cash}}</div>
+        <div class="dep-overview_employees" v-if="dep.resources.employees"><BigNumber :value="dep.resources.employees"/> employees</div>
+        <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: <Currency :value='dep.resources.cash' /></div>
+        <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: <Currency :value='dep.resources.cash' /></div>
         <div class="dep-overview_info" v-if="dep.resources.cooldown > 0">Department busy: {{dep.resources.cooldown}}\%</div>
-        <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: \${{dep.resources.balance}} per day</div>
-        <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
+        <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: <Income :value='dep.resources.balance' /> per day</div>
+        <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: <Income :value='dep.resources.balance' /> per day</div>
         <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
       </div>
       <button @click="addEmployee(dep)" class="dep-overview_action primary-button">
@@ -79,19 +79,19 @@ app.component('DepartmentDetails', {
       <div class="dep-details_resources">
         <strong class="dep-overview_name">{{dep.displayName}}</strong>
         <div class="dep-overview_employees" v-if="dep.resources.employees">
-          {{dep.resources.employees}} employees
+          <BigNumber :value="dep.resources.employees"/> employees
           <InfoBox msg="Each employee takes a minimum wage of $16 per day." />
         </div>
-        <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: \${{dep.resources.cash}}</div>
-        <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: \${{dep.resources.cash}}</div>
+        <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: <Currency :value='dep.resources.cash' /></div>
+        <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: <Currency :value='dep.resources.cash' /></div>
         <div class="dep-overview_credit" v-if="dep.resources.creditLine > 0">
-          Credit limit: \${{dep.resources.creditLine}}
+          Credit limit: <Currency :value='dep.resources.cash' />
           <InfoBox msg="Maximum amount your balance can drop below zero before bank blocks your business. Approx equal to your highest monthly profit." />
         </div>
         <div class="dep-overview_bankrupt" v-if="dep.resources.bankrupt">BANKRUPT!</div>
-        <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: \${{dep.resources.balance}} per day</div>
-        <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: \${{dep.resources.balance}} per day</div>
-        <div class="dep-overview_wages" v-if="dep.resources.wages">Wages: \${{dep.resources.wages}} per employee per day</div>
+        <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: <Income :value='dep.resources.balance' /> per day</div>
+        <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: <Income :value='dep.resources.balance' /> per day</div>
+        <div class="dep-overview_wages" v-if="dep.resources.wages">Wages: <Currency :value='dep.resources.wages' /> per employee per day</div>
         <div class="dep-overview_productivity" v-if="dep.typeId == 'scam-center'">Scam gain: \${{dep.resources.productivity}} per employee per day</div>
         <div class="dep-overview_productivity" v-if="dep.typeId == 'recruitment-agency'">Recruits: {{dep.resources.productivity}} new hire per employee</div>
         <div class="dep-overview_productivity" v-if="dep.typeId == 'legal-department'">
@@ -169,6 +169,24 @@ app.component('InfoBox', {
       <div class="material-symbols-outlined">info</div>
       {{ msg }}
     </div>`,
+});
+
+const CURRENCY_FORMAT = new Intl.NumberFormat('en-EN', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+const NUMBER_FORMAT = new Intl.NumberFormat('en-EN'); // just adds commas every 3 digits
+app.component('Currency', {
+  props: ['value'],
+  setup(props) { return { formatted: computed(() => CURRENCY_FORMAT.format(props.value)) }; },
+  template: `<span :class="{ 'currency-positive':value>0, 'currency-negative':value<0 }">{{ formatted }}</span>`,
+});
+app.component('Income', {
+  props: ['value'],
+  setup(props) { return { formatted: computed(() => CURRENCY_FORMAT.format(props.value)) }; },
+  template: `<span :class="{ 'income-positive':value>0, 'income-negative':value<0 }">{{ formatted }}</span>`,
+});
+app.component('BigNumber', {
+  props: ['value'],
+  setup(props) { return { formatted: computed(() => NUMBER_FORMAT.format(props.value)) }; },
+  template: `<span :class="{ 'bignumber-positive':value>0, 'bignumber-negative':value<0 }">{{ formatted }}</span>`,
 });
 
 export function render(rootEl, state) {
