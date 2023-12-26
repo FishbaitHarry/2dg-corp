@@ -46,6 +46,9 @@ button { /* button style reset */
   font-weight: bold;
   line-height: 24px;
 }
+.icon {
+  font-family: 'Material Symbols Outlined';
+}
 .dep-list_container {}
 
 .add-dep-selector_container {
@@ -95,6 +98,7 @@ button { /* button style reset */
   color: var(--color-mistyrose);
 
   display: flex;
+  position: relative;
 }
 .dep-overview_description .material-symbols-outlined {
   font-size: 14px;
@@ -128,10 +132,30 @@ button { /* button style reset */
   height: 55px;
   width: 55px;
 }
+.dep-overview_arrow {
+  position: absolute;
+  width: 10px;
+  background-color: var(--color-mistyrose);
+  pointer-events: none;
+}
+.dep-overview_endpoint {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  left: -5px;
+  top: -5px;
+  background-color: var(--color-mistyrose);
+  color: var(--color-darkgray);
+  font-family: 'Material Symbols Outlined';
+  font-size: 19px;
+  line-height: 19px;
+}
 
 /* DEP DETAILS */
 .dep-details_overlay {
   position: fixed;
+  z-index: 1;
   top: 0;
   bottom: 0;
   left: 0;
@@ -140,6 +164,7 @@ button { /* button style reset */
 }
 .dep-details_container {
   position: fixed;
+  z-index: 2;
   top: 15%;
   bottom: 15%;
   left: 5%;
