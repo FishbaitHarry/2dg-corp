@@ -34,8 +34,28 @@ export function setTarget(fromDep, toDep, state) {
 
   const fromIndex = state.departments.indexOf(fromDep);
   const toIndex = state.departments.indexOf(toDep);
-  const style = `top: ${(toIndex - fromIndex) * 50 + 25}px; bottom: 100%; left: ${fromIndex * 10}px;`;
-  fromDep.arrows = [{style}];
+  fromDep.connection = {
+    department: toDep,
+    top: (toIndex - fromIndex) * 50 + 25,
+    left: fromIndex * 10,
+    style: `top: ${(toIndex - fromIndex) * 50 + 25}px; bottom: 100%; left: ${fromIndex * 10}px;`,
+  };
+}
+export function onDepartmentDrop(dropEvt, department, state) {
+  const fromIndex = dropEvt.dataTransfer.getData('text/plain');
+  const fromDep = state.departments[fromIndex];
+  const fromCoords = dropEvt.dataTransfer.getData('text/coordinates');
+  const [ startX, startY ] = fromCoords.split('/');
+  const { clientX, clientY }  = dropEvt;
+  const { top, left } = fromDep.connection;
+
+  fromDep.connections.mainTarget = department;
+  fromDep.connection = {
+    department,
+    top: top - startY + clientY,
+    left: left - startX + clientX,
+  };
+  fromDep.connection.style = `top: ${fromDep.connection.top}px; bottom: 100%; left: ${fromDep.connection.left}px;`;
 }
 
 export const DEFAULT_ACTIONS = [

@@ -1,5 +1,6 @@
 import { createApp, shallowRef, ref, triggerRef, inject, computed, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
 import { addDepartment, getAvailableDepartments } from './departments.js';
+import { onDepartmentDrop } from './actions.js';
 
 const TopComponent = {
   setup() {
@@ -40,11 +41,24 @@ app.component('DepartmentOverview', {
   setup(props) {
     const state = inject('state');
     const showDetails = ref(false);
+    const highlight = ref(false);
     const addEmployee = (dep) => { dep.resources.employees += 1 };
-    return { dep: props.department, state, showDetails, addEmployee };
+    const onDragover = (evt) => {
+      evt.preventDefault();
+      highlight.value = true;
+      evt.dataTransfer.dropEffect = "link";
+    };
+    const onDragleave = (evt) => { highlight.value = false; };
+    const onDrop = (evt) => {
+      evt.preventDefault();
+      highlight.value = false;
+      onDepartmentDrop(evt, props.department, state.value);
+      triggerRef(state);
+    };
+    return { dep: props.department, state, showDetails, highlight, addEmployee, onDragover, onDragleave, onDrop };
   },
   template: `
-    <div class="dep-overview_container">
+    <div class="dep-overview_container" :class="{highlight:highlight}" @dragover="onDragover" @dragenter="onDragover" @dragleave="onDragleave" @drop="onDrop">
       <span class="material-symbols-outlined dep-overview_icon" v-if="dep.icon">{{dep.icon}}</span>
       <div class="dep-overview_resources" @click="showDetails = true">
         <strong class="dep-overview_name">{{dep.displayName}}</strong>
@@ -62,9 +76,7 @@ app.component('DepartmentOverview', {
         <span style="display:none;">Hire Employee</span>
       </button>
       <div class="dep-overview_connections">
-        <div v-for="item in dep.arrows" :style="item.style" class="dep-overview_arrow">
-          <div class="dep-overview_endpoint">link</div>
-        </div>
+        <ConnectionArrow v-if="dep.connection" :from="dep" />
       </div>
       <div class="dep-details_overlay" v-if="showDetails" @click="showDetails = false" />
       <DepartmentDetails :department="dep" v-if="showDetails" />
@@ -198,6 +210,24 @@ app.component('InfoBox', {
       <div class="material-symbols-outlined">info</div>
       {{ msg }}
     </div>`,
+});
+
+app.component('ConnectionArrow', {
+  props: ['from'],
+  setup(props) {
+    const state = inject('state');
+    const fromIndex = state.value.departments.indexOf(props.from);
+    function onDragStart(evt) {
+      evt.dataTransfer.setData('text/plain', fromIndex);
+      evt.dataTransfer.setData('text/coordinates', `${evt.clientX}/${evt.clientY}`);
+    }
+    return { state, onDragStart };
+  },
+  template: `
+    <div :style="from.connection.style" class="dep-overview_arrow" :data-fresh="state.ticksOld">
+      <div class="dep-overview_endpoint" draggable="true" @dragstart="onDragStart">link</div>
+    </div>
+  `,
 });
 
 const CURRENCY_FORMAT = new Intl.NumberFormat('en-EN', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });

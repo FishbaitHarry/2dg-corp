@@ -100,6 +100,9 @@ button { /* button style reset */
   display: flex;
   position: relative;
 }
+.dep-overview_container.highlight {
+  background-color: var(--color-grass);
+}
 .dep-overview_description .material-symbols-outlined {
   font-size: 14px;
 }
@@ -136,7 +139,6 @@ button { /* button style reset */
   position: absolute;
   width: 10px;
   background-color: var(--color-mistyrose);
-  pointer-events: none;
 }
 .dep-overview_endpoint {
   position: absolute;
