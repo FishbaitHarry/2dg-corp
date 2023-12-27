@@ -1,4 +1,4 @@
-import { DEFAULT_ACTIONS, setTarget } from "./actions.js";
+import { DEFAULT_ACTIONS } from "./department-actions.js";
 
 const MILLION = 1000000;
 const TOO_MUCH = Number.MAX_SAFE_INTEGER + 1;
@@ -8,9 +8,9 @@ export const BossOffice = {
   displayName: 'Boss Office',
   icon: 'monitoring',
   typeId: 'boss-office',
-  resources: { cash: MILLION, employees: 0, creditLine: 10000 },
+  resources: { cash: MILLION, creditLine: 10000 },
   connections: {},
-  actions: DEFAULT_ACTIONS,
+  actions: [],
 };
 export const ScamCenter = {
   id: 'scam-center-1',
@@ -76,7 +76,7 @@ export const CorporateLobbying = {
   actions: DEFAULT_ACTIONS,
 }
 
-const allDepartments = [BossOffice, ScamCenter, RecruitmentAgency, LegalDepartment, EmployeeRetention, CorporateLobbying];
+export const allDepartments = [BossOffice, ScamCenter, RecruitmentAgency, LegalDepartment, EmployeeRetention, CorporateLobbying];
 export function getAvailableDepartments(state) {
   // TODO: check state.achievements here
   return [
@@ -86,21 +86,4 @@ export function getAvailableDepartments(state) {
     EmployeeRetention,
     CorporateLobbying,
   ];
-}
-
-let idCounter = 0;
-export function addDepartment(state, typeId) {
-  const departmentProto = allDepartments.find( dep => dep.typeId == typeId );
-  if (!departmentProto) throw 'Invalid department typeId';
-  const newDepartment = {
-    ...departmentProto,
-    id: typeId + '-' + (idCounter++),
-    resources: {...departmentProto.resources}, // copy resources
-    connections: {}, // reset connections
-  };
-  state.departments.push(newDepartment);
-  if (departmentProto.connections.mainTarget) {
-    const lastDepartment = state.departments[state.departments.length - 2];
-    setTarget(newDepartment, lastDepartment, state);
-  }
 }

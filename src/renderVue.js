@@ -1,6 +1,6 @@
 import { createApp, shallowRef, ref, triggerRef, inject, computed, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
-import { addDepartment, getAvailableDepartments } from './departments.js';
-import { onDepartmentDrop } from './actions.js';
+import { getAvailableDepartments } from './departments.js';
+import { addDepartment, onDepartmentDrop } from './model.js';
 
 const TopComponent = {
   setup() {
@@ -13,12 +13,33 @@ const TopComponent = {
   },
   template: `
     <div @click="rerender">
+      <TopBar />
       <AlertList />
       <DepartmentList />
     </div>
   `,
 }
 const app = createApp(TopComponent);
+
+app.component('TopBar', {
+  setup() {
+    const state = inject('state');
+    return { state };
+  },
+  template: `
+    <div class="topbar_container">
+      <img class="topbar_ceo-portrait" src="./img/ceo1.png" />
+      <div class="topbar_resources">
+        <strong class="topbar_name">Fail Fast Corporation v0.6</strong>
+        <div class="topbar_cash">Account Balance: <Currency :value="state.cash" /></div>
+        <div class="topbar_income" v-if="state.income > 0">Income: <Income :value="state.income" /> per day (after tax)</div>
+        <div class="topbar_income" v-if="state.income <= 0">Loss: <Income :value="state.income" /> per day</div>
+      </div>
+      <div class="topbar_timer" v-if="state.bankruptcyTimer">{{state.bankruptcyTimer}}</div>
+      <button class="topbar_actions icon">menu</button>
+    </div>
+  `,
+});
 
 app.component('DepartmentList', {
   setup() {
@@ -59,20 +80,25 @@ app.component('DepartmentOverview', {
   },
   template: `
     <div class="dep-overview_container" :class="{highlight:highlight}" @dragover="onDragover" @dragenter="onDragover" @dragleave="onDragleave" @drop="onDrop">
-      <span class="material-symbols-outlined dep-overview_icon" v-if="dep.icon">{{dep.icon}}</span>
+      <span class="icon dep-overview_icon" @click="showDetails = true">{{dep.icon}}</span>
       <div class="dep-overview_resources" @click="showDetails = true">
         <strong class="dep-overview_name">{{dep.displayName}}</strong>
-        <div class="dep-overview_employees" v-if="dep.resources.employees"><BigNumber :value="dep.resources.employees"/> employees</div>
-        <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: <Currency :value='dep.resources.cash' /></div>
-        <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: <Currency :value='dep.resources.cash' /></div>
-        <div class="dep-overview_info" v-if="dep.resources.totalRaises > 0">Raises given: {{dep.resources.totalRaises}}</div>
+        <div class="dep-overview_employees" v-if="dep.resources.employees != undefined"><BigNumber :value="dep.resources.employees"/> employees</div>
+        <div class="dep-overview_info" v-if="dep.resources.totalRaises != undefined">Raises given: {{dep.resources.totalRaises}} times</div>
+        <div class="dep-overview_info" v-if="dep.resources.totalLeads != undefined">Recruited total: {{dep.resources.totalLeads}} employees</div>
+        <div class="dep-overview_info" v-if="dep.resources.corruptPoliticians != undefined">Corrupt politicians: <BigNumber :value="dep.resources.corruptPoliticians" />\%</div>
         <div class="dep-overview_info" v-if="dep.resources.cooldown != undefined">Department busy: <BigNumber :value="dep.resources.cooldown" />\%</div>
         <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: <Income :value='dep.resources.balance' /> per day</div>
         <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: <Income :value='dep.resources.balance' /> per day</div>
         <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
+        <div class="dep-overview_info" v-if="dep.typeId == 'boss-office'">
+          <div>Credit limit: <Currency :value='dep.resources.cash' /></div>
+          <div>Income tax: <BigNumber :value="state.worldState.incomeTax*100" />\% of daily income</div>
+          <div>Minimum wage: <Currency :value='state.worldState.minimumWage' /> per day</div>
+        </div>
       </div>
       <button @click="addEmployee(dep)" class="dep-overview_action primary-button">
-        <span class="material-symbols-outlined">person_add</span>
+        <span class="icon">person_add</span>
         <span style="display:none;">Hire Employee</span>
       </button>
       <div class="dep-overview_connections">
@@ -111,7 +137,7 @@ app.component('DepartmentDetails', {
         <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: <Income :value='dep.resources.balance' /> per day</div>
         <div class="dep-overview_wages" v-if="dep.resources.wages">Wages: <Currency :value='dep.resources.wages' /> per employee per day</div>
         <div class="dep-overview_productivity" v-if="dep.typeId == 'boss-office'">
-          Current income tax: {{state.worldState.incomeTax}} of daily income
+          Current income tax: <BigNumber :value="state.worldState.incomeTax*100"/>\% of daily income
           <InfoBox msg="You only need to pay income tax if company generates profit." />
           Current minimum wage: <Currency :value='state.worldState.minimumWage' /> per day
           <InfoBox msg="Minimum wage value increases over time as Worker Unions push for them to match inflation." />

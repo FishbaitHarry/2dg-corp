@@ -1,4 +1,5 @@
-import { GameState, onTickModel, restartGame } from "./model.js";
+import { GameState, restartGame } from "./model.js";
+import { onTickModel } from './ticks.js';
 import { render } from "./renderVue.js";
 
 const rootEl = document.getElementById('app');
@@ -11,5 +12,8 @@ const rerender = render(rootEl, gameState);
 function gameLoop() {
   onTickModel(gameState); // mutates gameState!
   rerender();
-  if (location.host=="localhost:8080" && gameState.ticksOld > 800) clearInterval(clock);
 }
+
+// for debug
+window.gameState = gameState;
+window.gamePause = () => clearInterval(clock);
