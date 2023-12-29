@@ -164,4 +164,5 @@ function onTickLobbying(dep, state) {
   state.cash -= operatingCost;
   dep.resources.balance = -1 * operatingCost;
   dep.resources.cooldown = Math.max(0, dep.resources.cooldown - cooldownReduction);
+  dep.resources.productivity = productivity; // just for info
 }

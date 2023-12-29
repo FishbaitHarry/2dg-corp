@@ -37,6 +37,7 @@ export function restartGame(state) {
 
 let idCounter = 0;
 export function addDepartment(state, typeId) {
+  const departmentCost = getDepartmentCost(state);
   const departmentProto = allDepartments.find( dep => dep.typeId == typeId );
   if (!departmentProto) throw 'Invalid department typeId';
   const newDepartment = {
@@ -50,6 +51,8 @@ export function addDepartment(state, typeId) {
     const lastDepartment = state.departments[state.departments.length - 2];
     setTarget(newDepartment, lastDepartment, state);
   }
+  state.cash -= departmentCost;
+  state.yesterdayCash -= departmentCost; // it reduces taxes and does not appear as a loss
 }
 
 export function setTarget(fromDep, toDep, state) {
@@ -80,4 +83,8 @@ export function onDepartmentDrop(dropEvt, department, state) {
     left: left - startX + clientX,
   };
   fromDep.connection.style = `top: ${fromDep.connection.top}px; bottom: 100%; left: ${fromDep.connection.left}px;`;
+}
+
+export function getDepartmentCost(state) {
+  return (state.departments.length + 1) * state.departments.length * 20000;
 }

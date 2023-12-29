@@ -1,6 +1,6 @@
 import { createApp, shallowRef, ref, triggerRef, inject, computed, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
 import { getAvailableDepartments } from './departments.js';
-import { addDepartment, onDepartmentDrop } from './model.js';
+import { addDepartment, getDepartmentCost, onDepartmentDrop } from './model.js';
 
 const TopComponent = {
   setup() {
@@ -129,7 +129,7 @@ app.component('DepartmentDetails', {
         <div class="dep-overview_cash" v-if="dep.resources.cash > 0">Cash: <Currency :value='dep.resources.cash' /></div>
         <div class="dep-overview_cash-negative" v-if="dep.resources.cash < 0">Liability: <Currency :value='dep.resources.cash' /></div>
         <div class="dep-overview_credit" v-if="dep.resources.creditLine > 0">
-          Credit limit: <Currency :value='dep.resources.cash' />
+          Credit limit: <Currency :value='dep.resources.creditLine' />
           <InfoBox msg="Maximum amount your balance can drop below zero before bank blocks your business. Approx equal to your highest monthly profit." />
         </div>
         <div class="dep-overview_bankrupt" v-if="dep.resources.bankrupt">BANKRUPT!</div>
@@ -184,13 +184,14 @@ app.component('AddDepartmentSelector', {
       active.value = false;
     };
     const available = computed(() => getAvailableDepartments(state.value));
-    return { active, submit, available };
+    const cost = computed(() => getDepartmentCost(state.value));
+    return { active, submit, available, cost };
   },
   template: `
     <div class="add-dep-selector_container">
       <button type="button" v-if="!active" class="add-dep-selector_cta" @click="active=true">
         <span class="material-symbols-outlined">box_add</span>
-        Add new department
+        Add new department [<Currency :value="cost" />]
       </button>
       <div v-if="active" class="add-dep-selector_list">
         <button type="button" v-for="item in available" @click="submit(item)" class="add-dep-selector_option">
