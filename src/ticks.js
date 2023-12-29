@@ -10,6 +10,9 @@ export function onTickModel(state) {
     if (dep.typeId == 'legal-department') onTickLegal(dep, state);
     if (dep.typeId == 'employee-retention') onTickRetention(dep, state);
     if (dep.typeId == 'lobbying') onTickLobbying(dep, state);
+    if (dep.typeId == 'hostile-takeovers') onTickHostileTakeovers(dep, state);
+    if (dep.typeId == 'termination-specialists') onTickTerminationSpecialists(dep, state);
+    if (dep.typeId == 'patent-trolling') onTickPatentTrolling(dep, state);
   });
   state.ticksOld += 1;
   // inflation
@@ -165,4 +168,54 @@ function onTickLobbying(dep, state) {
   dep.resources.balance = -1 * operatingCost;
   dep.resources.cooldown = Math.max(0, dep.resources.cooldown - cooldownReduction);
   dep.resources.productivity = productivity; // just for info
+}
+
+function onTickHostileTakeovers(dep, state) {
+  const { employees, wages } = dep.resources;
+  const operatingCost = employees * wages;
+
+  state.cash -= operatingCost;
+  dep.resources.balance = -1 * operatingCost;
+}
+
+function onTickTerminationSpecialists(dep, state) {
+  const { employees, wages, baseProductivity, morale } = dep.resources;
+  const moraleMultiplier = Math.max(0.1, (morale + 100) / 200);
+  const productivity = baseProductivity * (moraleMultiplier);
+  const operatingCost = employees * wages;
+  const outplacements = Math.floor(employees * productivity);
+
+  state.cash -= operatingCost;
+  dep.resources.balance = -1 * operatingCost;
+  dep.resources.totalOutplacements += outplacements;
+  dep.resources.productivity = productivity; // just for info
+  dep.resources.morale = 200; // always happy!
+
+  const { mainTarget } = dep.connections;
+  if (mainTarget && mainTarget.resources.employees) {
+    mainTarget.resources.employees = Math.max(0, mainTarget.resources.employees - outplacements);
+  }
+}
+
+function onTickPatentTrolling(dep, state) {
+  const { employees, wages, baseProductivity, morale } = dep.resources;
+  const moraleMultiplier = Math.max(0.1, (morale + 100) / 200);
+  const productivity = baseProductivity * (moraleMultiplier);
+  const operatingCost = employees * wages;
+  const maxPatentWars = Math.floor(employees * productivity);
+  
+  state.cash -= operatingCost;
+  dep.resources.balance = -1 * operatingCost;
+  dep.resources.productivity = productivity; // just for info
+  dep.resources.currentPatentWars = 0;
+  
+  const mainTarget = state.departments.find(dep => dep.resources.patents > 0);
+  if (mainTarget) {
+    const currentPatentWars = Math.min(maxPatentWars, mainTarget.resources.patents);
+    const patentIncome = currentPatentWars * 10000;
+
+    dep.resources.currentPatentWars = currentPatentWars;
+    state.cash += patentIncome;
+    dep.resources.balance += patentIncome;
+  }
 }

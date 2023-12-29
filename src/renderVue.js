@@ -88,6 +88,8 @@ app.component('DepartmentOverview', {
         <div class="dep-overview_info" v-if="dep.resources.totalLeads != undefined">Recruited total: {{dep.resources.totalLeads}} employees</div>
         <div class="dep-overview_info" v-if="dep.resources.corruptPoliticians != undefined">Corrupt politicians: <BigNumber :value="dep.resources.corruptPoliticians" />\%</div>
         <div class="dep-overview_info" v-if="dep.resources.cooldown != undefined">Department busy: <BigNumber :value="dep.resources.cooldown" />\%</div>
+        <div class="dep-overview_info" v-if="dep.resources.patents != undefined">Patents obtained: {{dep.resources.patents}}</div>
+        <div class="dep-overview_info" v-if="dep.resources.currentPatentWars != undefined">Abusing: {{dep.resources.currentPatentWars}} patents</div>
         <div class="dep-overview_profit" v-if="dep.resources.balance > 0">Profit: <Income :value='dep.resources.balance' /> per day</div>
         <div class="dep-overview_loss" v-if="dep.resources.balance < 0">Loss: <Income :value='dep.resources.balance' /> per day</div>
         <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
@@ -97,9 +99,9 @@ app.component('DepartmentOverview', {
           <div>Minimum wage: <Currency :value='state.worldState.minimumWage' /> per day</div>
         </div>
       </div>
-      <button @click="addEmployee(dep)" class="dep-overview_action primary-button">
-        <span class="icon">person_add</span>
-        <span style="display:none;">Hire Employee</span>
+      <button v-if="dep.actions.length > 0" @click="dep.actions[0].onClick(dep)" class="dep-overview_action primary-button">
+        <span class="icon">{{dep.actions[0].icon}}</span>
+        <span style="display:none;">{{dep.actions[0].displayName}}</span>
       </button>
       <div class="dep-overview_connections">
         <ConnectionArrow v-if="dep.connection" :from="dep" />
@@ -152,8 +154,14 @@ app.component('DepartmentDetails', {
           Lobbying speed: {{dep.resources.productivity}}\% per employee per day
           <InfoBox msg="Convincing a new politician takes time and effort, each new one takes more." />
         </div>
+        <div class="dep-overview_productivity" v-if="dep.typeId == 'patent-trolling'">
+          Lawyer efficiency: {{dep.resources.productivity}} patents can be guarded per employee
+          <InfoBox msg="You must control enough patents and enough employees to extract value from them." />
+        </div>
         <div class="dep-overview_info" v-if="dep.resources.totalRaises > 0">Raises given: {{dep.resources.totalRaises}}</div>
         <div class="dep-overview_info" v-if="dep.resources.cooldown != undefined">Department busy: <BigNumber :value="dep.resources.cooldown" />\%</div>
+        <div class="dep-overview_info" v-if="dep.resources.patents != undefined">Patents obtained: {{dep.resources.patents}}</div>
+        <div class="dep-overview_info" v-if="dep.resources.currentPatentWars != undefined">Abusing: {{dep.resources.currentPatentWars}} patents</div>
         <div class="dep-details_morale" v-if="dep.resources.morale != undefined">
           Employee morale: <BigNumber :value="dep.resources.morale" />
           <span class="icon" v-if="dep.resources.morale > 90">sentiment_satisfied</span>
@@ -166,6 +174,7 @@ app.component('DepartmentDetails', {
           <InfoBox msg="Your lobbying reduces the rate at which income tax raises proportionally to the above metric." />
         </div>
         <div class="dep-overview_bankrupt" v-if="dep.resources.lawsuits > 0">Department closed due to pending lawsuits!</div>
+        
         <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
       </div>
       <button v-for="item in dep.actions" @click="item.onClick(dep)" class="dep-details_action primary-button">

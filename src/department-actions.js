@@ -29,6 +29,16 @@ const SET_TARGET = {
   onClick: (dep) => { dep.showInfo = true },
 };
 
+export const HOSTILE_TAKEOVER = {
+  displayName: 'Buy a company',
+  icon: 'receipt_long',
+  onClick: (dep) => {
+    dep.resources.companiesBought += 1;
+    dep.resources.patents += (dep.resources.companiesBought + 1);
+    dep.resources.employees += dep.resources.companiesBought * (dep.resources.companiesBought + 1) * 1000;
+  },
+}
+
 export const DEFAULT_ACTIONS = [
   HIRE_EMPLOYEE,
   FIRE_EMPLOYEE,
