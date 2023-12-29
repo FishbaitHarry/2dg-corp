@@ -30,7 +30,7 @@ app.component('TopBar', {
     <div class="topbar_container">
       <img class="topbar_ceo-portrait" src="./img/ceo1.png" />
       <div class="topbar_resources">
-        <strong class="topbar_name">Fail Fast Corporation v0.6</strong>
+        <strong class="topbar_name">Fail Fast Corporation v0.7</strong>
         <div class="topbar_cash">Account Balance: <Currency :value="state.cash" /></div>
         <div class="topbar_income" v-if="state.income > 0">Income: <Income :value="state.income" /> per day (after tax)</div>
         <div class="topbar_income" v-if="state.income <= 0">Loss: <Income :value="state.income" /> per day</div>

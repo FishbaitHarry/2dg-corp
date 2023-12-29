@@ -115,9 +115,9 @@ button { /* button style reset */
   margin-right: 5px;
 }
 .add-dep-selector_list{
-  height: 80px;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 .add-dep-selector_option {
   display: flex;
