@@ -45,7 +45,7 @@ app.component('DepartmentList', {
   setup() {
     const state = inject('state');
     const departments = computed(() => state.value.departments);
-    return { departments };
+    return { state, departments };
   },
   template: `
     <div class="dep-list_container">
@@ -53,6 +53,7 @@ app.component('DepartmentList', {
         <DepartmentOverview :department="item" />
       </template>
       <AddDepartmentSelector />
+      <div class="dep-overview_ticks">ticksOld is {{state.ticksOld}}</div>
     </div>
     `
 });
